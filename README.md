@@ -16,3 +16,5 @@ Rust type tutor in cli to help me learn colemak :)
 - [ ] Add ,.!; symbols to words that appear
 - [ ] Option to filter out words containg '
 - [ ] Option to add numbers to rotation
+- [ ] Option to select different difficulties of the words that are shown
+- [ ] Option to appear upper case letters
