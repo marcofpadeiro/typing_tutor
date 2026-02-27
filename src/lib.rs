@@ -1,4 +1,4 @@
-use crate::engine::input::process_word_input;
+use crate::engine::process_word_input;
 use crate::engine::render::render_line;
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
