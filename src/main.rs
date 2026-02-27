@@ -28,8 +28,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("\n\n--- Results ---");
             println!("Time: {:.1?}", game_result.time_took);
             println!("Words completed: {}", game_result.words_completed);
-            println!("Accuracy: {:.1}%", game_result.accuracy);
-            println!("WPM: {}", game_result.get_wpm());
+            println!("Accuracy: {:.1}%", game_result.accuracy());
+            println!("WPM: {}", game_result.wpm());
         }
         Err(e) => {
             eprintln!("\nError occurred: {}", e);

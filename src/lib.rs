@@ -20,12 +20,15 @@ pub enum RenderMode {
 }
 
 pub struct WordResult {
-    correct: usize,
-    incorrect: usize,
+    correct_chars: usize,
+    incorrect_chars: usize,
 }
 impl WordResult {
-    pub fn new(correct: usize, incorrect: usize) -> Self {
-        WordResult { correct, incorrect }
+    pub fn new(correct_chars: usize, incorrect_chars: usize) -> Self {
+        WordResult {
+            correct_chars,
+            incorrect_chars,
+        }
     }
 }
 
@@ -33,16 +36,39 @@ impl WordResult {
 pub struct GameResult {
     pub time_took: Duration,
     pub words_completed: usize,
-    pub accuracy: f32,
+    pub correct_chars: usize,
+    pub incorrect_chars: usize,
 }
 impl GameResult {
-    pub fn get_wpm(self) -> usize {
+    pub fn new(
+        time_took: Duration,
+        words_completed: usize,
+        correct_chars: usize,
+        incorrect_chars: usize,
+    ) -> Self {
+        GameResult {
+            time_took,
+            words_completed,
+            correct_chars,
+            incorrect_chars,
+        }
+    }
+    pub fn wpm(self) -> usize {
         let secs = self.time_took.as_secs() as usize;
         if secs == 0 {
             return 0;
         }
 
         (self.words_completed * 60) / secs
+    }
+    pub fn accuracy(self) -> f32 {
+        let total_presses = (self.correct_chars + self.incorrect_chars) as f32;
+
+        if total_presses > 0.0 {
+            (self.correct_chars as f32 * 100.0) / total_presses
+        } else {
+            0.0
+        }
     }
 }
 
@@ -73,8 +99,8 @@ pub fn run(
                 let word_cycle_result = run_word_cycle(out, &mut queue, None, start)?;
                 if let Some(word_result) = word_cycle_result {
                     words_completed += 1;
-                    correct_chars += word_result.correct;
-                    incorrect_chars += word_result.incorrect;
+                    correct_chars += word_result.correct_chars;
+                    incorrect_chars += word_result.incorrect_chars;
                 }
                 queue.remove(0);
                 if words_completed < num_to_finish - 2 {
@@ -90,8 +116,8 @@ pub fn run(
                 let word_cycle_result = run_word_cycle(out, &mut queue, Some(limit), start)?;
                 if let Some(word_result) = word_cycle_result {
                     words_completed += 1;
-                    correct_chars += word_result.correct;
-                    incorrect_chars += word_result.incorrect;
+                    correct_chars += word_result.correct_chars;
+                    incorrect_chars += word_result.incorrect_chars;
                 }
                 queue.remove(0);
                 queue.push(get_word());
@@ -100,18 +126,11 @@ pub fn run(
         }
     }
 
-    let total_presses = (correct_chars + incorrect_chars) as f32;
-
-    let accuracy = if total_presses > 0.0 {
-        (correct_chars as f32 * 100.0) / total_presses
-    } else {
-        0.0
-    };
-
     Ok(GameResult {
         time_took,
         words_completed,
-        accuracy,
+        correct_chars,
+        incorrect_chars,
     })
 }
 
