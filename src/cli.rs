@@ -22,7 +22,7 @@ pub struct Args {
     pub filter: Option<String>,
 
     /// number of upcoming words to display in the queue
-    #[arg(short, long, default_value_t = 3)]
+    #[arg(short, long, default_value_t = 2)]
     pub word_preview: u64,
 
     /// exclude words shorter than this length
