@@ -2,7 +2,7 @@ use std::{io::stdout, process::exit};
 
 use clap::Parser;
 use crossterm::terminal;
-use typing_tutor::{RenderMode, run};
+use clack::{RenderMode, run};
 
 use crate::{cli::Args, dictionary::load_dictionary};
 

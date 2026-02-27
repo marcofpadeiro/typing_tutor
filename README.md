@@ -1,11 +1,11 @@
-# rust type tutor
+# clack
 Rust type tutor in cli to help me learn colemak :) 
 
 ## installation
 
 ```bash
-git clone https://github.com/marcofpadeiro/typing_tutor
-cd typing_tutor
+git clone https://github.com/marcofpadeiro/clack
+cd clack
 
 cargo install --path .
 ```
@@ -14,7 +14,7 @@ cargo install --path .
 
 run the game with default settings (30s timer, medium dictionary):
 ```bash
-typing_tutor
+clack
 ```
 
 #### command line arguments
@@ -32,25 +32,25 @@ you can customize your session using flags:
 ##### race against time
 type as many words as you can in one minute:
 ```bash
-typing_tutor --mode timer --quantity 60
+clack --mode timer --quantity 60
 ```
 
 #### accuracy practice
 type 50 words as fast as possible using the small dictinary:
 ```bash
-typing_tutor --mode words --quantity 50 --dictionary short
+clack --mode words --quantity 50 --dictionary short
 ```
 
 #### practice home row
 only type words that consist of home row characters:
 ```bash
-typing_tutor --filter "asdfghjkl"
+clack --filter "asdfghjkl"
 ```
 
 #### advanced
 type 67 words, with no word preview, include words of any size, using a dictionary from a url
 ```bash
-typing_tutor --mode words --quantity 67 --word-preview 0 --min-word-size 0 --dictionary "https://raw.githubusercontent.com/first20hours/google-10000-english/refs/heads/master/20k.txt"
+clack --mode words --quantity 67 --word-preview 0 --min-word-size 0 --dictionary "https://raw.githubusercontent.com/first20hours/google-10000-english/refs/heads/master/20k.txt"
 ```
 
 ## roadmap

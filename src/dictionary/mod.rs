@@ -14,7 +14,7 @@ pub fn load_dictionary(input: &str, filter: Option<String>) -> Vec<String> {
     let source = DictSource::parse(input);
     let cache_dir = dirs::cache_dir()
         .expect("Cache dir not found")
-        .join("typing_tutor");
+        .join(env!("CARGO_PKG_NAME"));
 
     if !cache_dir.exists() {
         fs::create_dir_all(&cache_dir).ok();

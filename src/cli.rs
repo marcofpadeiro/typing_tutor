@@ -1,5 +1,5 @@
 use clap::Parser;
-use typing_tutor::GameMode;
+use clack::GameMode;
 
 /// a minimalist terminal typing tutor
 #[derive(Parser, Debug)]
