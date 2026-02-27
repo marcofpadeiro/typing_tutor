@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut out = stdout();
     terminal::enable_raw_mode()?;
 
-    let dictionary = load_dictionary("medium");
+    let dictionary = load_dictionary("medium", Some("arstneio"));
 
     let result = run(
         &mut out,

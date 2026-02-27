@@ -5,11 +5,11 @@ Rust type tutor in cli to help me learn colemak :)
 - [x] Timer
 - [x] Option to choose between **timed runs** vs **amount of words** 
 - [x] Accuracy tracker
-- [ ] Dictionary implementation
+- [x] Dictionary implementation
 - [ ] Proper cli flags
 - [ ] Live WPM counter
-- [ ] Support for custom dictionary files
-- [ ] Support for filtering dictionary words based on provided letters
+- [x] Support for custom dictionary files
+- [x] Support for filtering dictionary words based on provided letters
 - [ ] Variable number_words_show if 0 show all the words
 - [ ] Log runs
 - [ ] Add ,.!; symbols to words that appear
