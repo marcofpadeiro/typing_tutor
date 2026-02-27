@@ -1,4 +1,4 @@
-use std::io::stdout;
+use std::{io::stdout, process::exit};
 
 use clap::Parser;
 use crossterm::terminal;
@@ -16,6 +16,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     terminal::enable_raw_mode()?;
 
     let dictionary = load_dictionary(&args.dictionary, args.filter);
+    if dictionary.is_empty() {
+        terminal::disable_raw_mode()?;
+        println!("failed loading dictionary...");
+        exit(0);
+    }
 
     let result = run(
         &mut out,

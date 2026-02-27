@@ -78,7 +78,7 @@ impl GameResult {
 pub fn run(
     out: &mut Stdout,
     words: &Vec<String>,
-    num_words_to_show: usize,
+    word_preview: usize,
     mode: GameMode,
     quantity: u64,
     _render_mode: RenderMode,
@@ -98,7 +98,8 @@ pub fn run(
     let mut correct_chars = 0;
     let mut incorrect_chars = 0;
 
-    for _ in 0..num_words_to_show {
+    queue.push(get_word());
+    for _ in 0..word_preview {
         queue.push(get_word());
     }
 
