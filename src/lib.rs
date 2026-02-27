@@ -19,6 +19,16 @@ pub enum RenderMode {
     Upcoming(usize),
 }
 
+pub struct WordResult {
+    correct: usize,
+    incorrect: usize,
+}
+impl WordResult {
+    pub fn new(correct: usize, incorrect: usize) -> Self {
+        WordResult { correct, incorrect }
+    }
+}
+
 #[derive(Clone, Copy)]
 pub struct GameResult {
     pub time_took: Duration,
@@ -49,6 +59,8 @@ pub fn run(
     let mut words_completed: usize = 0;
     let mut queue: Vec<&str> = vec![];
     let mut get_word = || words.choose(&mut rng).copied().unwrap_or("error");
+    let mut correct_chars = 0;
+    let mut incorrect_chars = 0;
 
     for _ in 0..num_words_to_show {
         queue.push(get_word());
@@ -58,8 +70,11 @@ pub fn run(
         GameMode::Words(num_to_finish) => {
             let start = Instant::now();
             while words_completed < num_to_finish {
-                if run_word_cycle(out, &mut queue, None, start)? {
+                let word_cycle_result = run_word_cycle(out, &mut queue, None, start)?;
+                if let Some(word_result) = word_cycle_result {
                     words_completed += 1;
+                    correct_chars += word_result.correct;
+                    incorrect_chars += word_result.incorrect;
                 }
                 queue.remove(0);
                 if words_completed < num_to_finish - 2 {
@@ -72,8 +87,11 @@ pub fn run(
             let start = Instant::now();
             let limit = Duration::from_secs(seconds);
             while start.elapsed() < limit {
-                if run_word_cycle(out, &mut queue, Some(limit), start)? {
+                let word_cycle_result = run_word_cycle(out, &mut queue, Some(limit), start)?;
+                if let Some(word_result) = word_cycle_result {
                     words_completed += 1;
+                    correct_chars += word_result.correct;
+                    incorrect_chars += word_result.incorrect;
                 }
                 queue.remove(0);
                 queue.push(get_word());
@@ -82,10 +100,18 @@ pub fn run(
         }
     }
 
+    let total_presses = (correct_chars + incorrect_chars) as f32;
+
+    let accuracy = if total_presses > 0.0 {
+        (correct_chars as f32 * 100.0) / total_presses
+    } else {
+        0.0
+    };
+
     Ok(GameResult {
         time_took,
         words_completed,
-        accuracy: 0.0,
+        accuracy,
     })
 }
 
@@ -94,7 +120,7 @@ fn run_word_cycle(
     queue: &mut Vec<&str>,
     time_limit: Option<Duration>,
     start_time: Instant,
-) -> Result<bool, Box<dyn std::error::Error>> {
+) -> Result<Option<WordResult>, Box<dyn std::error::Error>> {
     render_line(out, queue)?;
 
     Ok(process_word_input(

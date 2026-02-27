@@ -11,14 +11,17 @@ use crossterm::{
     terminal,
 };
 
+use crate::WordResult;
+
 pub fn process_word_input(
     out: &mut Stdout,
     target: &str,
     time_limit: Option<Duration>,
     start_time: Instant,
-) -> Result<bool, Box<dyn std::error::Error>> {
+) -> Result<Option<WordResult>, Box<dyn std::error::Error>> {
     let mut written = String::new();
     let target_chars: Vec<char> = target.chars().collect();
+    let mut incorrect: usize = 0;
 
     loop {
         if let Some(limit) = time_limit {
@@ -38,12 +41,13 @@ pub fn process_word_input(
 
                         if c == ' ' && written == target {
                             execute!(out, style::ResetColor)?;
-                            return Ok(true); // word finished successfully
+                            return Ok(Some(WordResult::new(target_chars.len(), incorrect))); // word finished successfully
                         }
 
                         let color = if index < target_chars.len() && c == target_chars[index] {
                             Color::Green
                         } else {
+                            incorrect += 1;
                             Color::Red
                         };
 
@@ -76,5 +80,5 @@ pub fn process_word_input(
     }
 
     execute!(out, style::ResetColor)?;
-    Ok(false)
+    Ok(None)
 }

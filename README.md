@@ -4,7 +4,7 @@ Rust type tutor in cli to help me learn colemak :)
 - [x] Basic Word reading and print
 - [x] Timer
 - [x] Option to choose between **timed runs** vs **amount of words** 
-- [ ] Accuracy tracker
+- [x] Accuracy tracker
 - [ ] Dictionary implementation
 - [ ] Proper cli flags
 - [ ] Live WPM counter
