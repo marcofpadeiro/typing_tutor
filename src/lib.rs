@@ -58,12 +58,13 @@ pub fn run(
         GameMode::Words(num_to_finish) => {
             let start = Instant::now();
             while words_completed < num_to_finish {
-                run_word_cycle(out, &mut queue)?;
+                if run_word_cycle(out, &mut queue, None, start)? {
+                    words_completed += 1;
+                }
                 queue.remove(0);
                 if words_completed < num_to_finish - 2 {
                     queue.push(get_word());
                 }
-                words_completed += 1;
             }
             time_took = start.elapsed();
         }
@@ -71,10 +72,11 @@ pub fn run(
             let start = Instant::now();
             let limit = Duration::from_secs(seconds);
             while start.elapsed() < limit {
-                run_word_cycle(out, &mut queue)?;
+                if run_word_cycle(out, &mut queue, Some(limit), start)? {
+                    words_completed += 1;
+                }
                 queue.remove(0);
                 queue.push(get_word());
-                words_completed += 1;
             }
             time_took = start.elapsed();
         }
@@ -90,9 +92,15 @@ pub fn run(
 fn run_word_cycle(
     out: &mut Stdout,
     queue: &mut Vec<&str>,
-) -> Result<(), Box<dyn std::error::Error>> {
+    time_limit: Option<Duration>,
+    start_time: Instant,
+) -> Result<bool, Box<dyn std::error::Error>> {
     render_line(out, queue)?;
-    process_word_input(out, queue.iter().next().unwrap())?;
 
-    Ok(())
+    Ok(process_word_input(
+        out,
+        queue.iter().next().unwrap(),
+        time_limit,
+        start_time,
+    )?)
 }

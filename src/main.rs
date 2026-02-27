@@ -26,8 +26,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     match result {
         Ok(game_result) => {
             println!("\n\n--- Results ---");
-            println!("Time: {:.2?}", game_result.time_took);
-            println!("Words written: {}", game_result.words_completed);
+            println!("Time: {:.1?}", game_result.time_took);
+            println!("Words completed: {}", game_result.words_completed);
             println!("Accuracy: {:.1}%", game_result.accuracy);
             println!("WPM: {}", game_result.get_wpm());
         }
