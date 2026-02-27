@@ -1,17 +1,20 @@
 use crate::engine::process_word_input;
 use crate::engine::render::render_line;
+use clap::ValueEnum;
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
 use std::io::Stdout;
 use std::time::Duration;
 use std::time::Instant;
+use std::usize;
 
 mod dictionary;
 mod engine;
 
+#[derive(ValueEnum, Clone, Debug)]
 pub enum GameMode {
-    Timer(u64),
-    Words(usize),
+    Timer,
+    Words,
 }
 
 pub enum RenderMode {
@@ -76,7 +79,8 @@ pub fn run(
     out: &mut Stdout,
     words: &Vec<String>,
     num_words_to_show: usize,
-    game_mode: GameMode,
+    mode: GameMode,
+    quantity: u64,
     _render_mode: RenderMode,
 ) -> Result<GameResult, Box<dyn std::error::Error>> {
     let mut rng = thread_rng();
@@ -98,10 +102,10 @@ pub fn run(
         queue.push(get_word());
     }
 
-    match game_mode {
-        GameMode::Words(num_to_finish) => {
+    match mode {
+        GameMode::Words => {
             let start = Instant::now();
-            while words_completed < num_to_finish {
+            while words_completed < quantity as usize {
                 let word_cycle_result = run_word_cycle(out, &mut queue, None, start)?;
                 if let Some(word_result) = word_cycle_result {
                     words_completed += 1;
@@ -109,15 +113,15 @@ pub fn run(
                     incorrect_chars += word_result.incorrect_chars;
                 }
                 queue.remove(0);
-                if words_completed < num_to_finish - 2 {
+                if words_completed < quantity as usize - 1 {
                     queue.push(get_word());
                 }
             }
             time_took = start.elapsed();
         }
-        GameMode::Timer(seconds) => {
+        GameMode::Timer => {
             let start = Instant::now();
-            let limit = Duration::from_secs(seconds);
+            let limit = Duration::from_secs(quantity);
             while start.elapsed() < limit {
                 let word_cycle_result = run_word_cycle(out, &mut queue, Some(limit), start)?;
                 if let Some(word_result) = word_cycle_result {

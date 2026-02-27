@@ -1,4 +1,3 @@
-use crate::dictionary;
 use crate::dictionary::sources::DictSource;
 use dirs;
 use std::fs;
@@ -11,7 +10,7 @@ pub const QUEUE_SIZE: usize = 2;
 pub const MIN_WORD_SIZE: usize = 2;
 
 #[allow(dead_code)]
-pub fn load_dictionary(input: &str, filter: Option<&str>) -> Vec<String> {
+pub fn load_dictionary(input: &str, filter: Option<String>) -> Vec<String> {
     let source = DictSource::parse(input);
     let cache_dir = dirs::cache_dir()
         .expect("Cache dir not found")

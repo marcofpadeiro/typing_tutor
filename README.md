@@ -6,7 +6,7 @@ Rust type tutor in cli to help me learn colemak :)
 - [x] Option to choose between **timed runs** vs **amount of words** 
 - [x] Accuracy tracker
 - [x] Dictionary implementation
-- [ ] Proper cli flags
+- [x] Proper cli flags
 - [ ] Live WPM counter
 - [x] Support for custom dictionary files
 - [x] Support for filtering dictionary words based on provided letters

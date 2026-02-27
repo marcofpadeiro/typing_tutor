@@ -1,26 +1,29 @@
 use std::io::stdout;
 
+use clap::Parser;
 use crossterm::terminal;
-use typing_tutor::{GameMode, RenderMode, run};
+use typing_tutor::{RenderMode, run};
 
-use crate::dictionary::{QUEUE_SIZE, load_dictionary};
+use crate::{cli::Args, dictionary::load_dictionary};
 
+mod cli;
 mod dictionary;
 
-const TIMER: u64 = 30;
-
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let args = Args::parse();
+
     let mut out = stdout();
     terminal::enable_raw_mode()?;
 
-    let dictionary = load_dictionary("medium", Some("arstneio"));
+    let dictionary = load_dictionary(&args.dictionary, args.filter);
 
     let result = run(
         &mut out,
         &dictionary,
-        QUEUE_SIZE,
-        GameMode::Timer(TIMER),
-        RenderMode::Upcoming(QUEUE_SIZE),
+        args.word_preview as usize,
+        args.mode,
+        args.quantity,
+        RenderMode::Upcoming(args.word_preview as usize),
     );
 
     terminal::disable_raw_mode()?;
