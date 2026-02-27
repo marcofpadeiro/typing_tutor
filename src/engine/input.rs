@@ -4,7 +4,7 @@ use crossterm::{
     cursor,
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    style::{Color, Print, SetForegroundColor},
+    style::{self, Color, Print, SetForegroundColor},
     terminal,
 };
 
@@ -26,6 +26,7 @@ pub fn process_word_input(
                     let index = written.len();
 
                     if c == ' ' && written == target {
+                        execute!(out, style::ResetColor)?;
                         break;
                     }
 
@@ -61,5 +62,7 @@ pub fn process_word_input(
             out.flush()?;
         }
     }
+
+    execute!(out, style::ResetColor)?;
     Ok(())
 }

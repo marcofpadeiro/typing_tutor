@@ -1,4 +1,4 @@
-use crate::dictionary::NUM_UPCOMING_WORDS_TO_SHOW;
+use crate::dictionary::QUEUE_SIZE;
 use crate::dictionary::WORDS;
 use std::io::stdout;
 
@@ -7,24 +7,35 @@ use typing_tutor::{GameMode, RenderMode, run};
 
 mod dictionary;
 
-const TIMER: usize = 30;
+const TIMER: u64 = 30;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut out = stdout();
     terminal::enable_raw_mode()?;
 
-    if let Err(e) = run(
+    let result = run(
         &mut out,
         WORDS.to_vec(),
-        NUM_UPCOMING_WORDS_TO_SHOW,
+        QUEUE_SIZE,
         GameMode::Timer(TIMER),
-        RenderMode::Upcoming(NUM_UPCOMING_WORDS_TO_SHOW),
-    ) {
-        terminal::disable_raw_mode()?;
-        return Err(e);
-    }
+        RenderMode::Upcoming(QUEUE_SIZE),
+    );
 
     terminal::disable_raw_mode()?;
-    println!("\r\nDone!");
+
+    match result {
+        Ok(game_result) => {
+            println!("\n\n--- Results ---");
+            println!("Time: {:.2?}", game_result.time_took);
+            println!("Words written: {}", game_result.words_completed);
+            println!("Accuracy: {:.1}%", game_result.accuracy);
+            println!("WPM: {}", game_result.get_wpm());
+        }
+        Err(e) => {
+            eprintln!("\nError occurred: {}", e);
+            return Err(e);
+        }
+    }
+
     Ok(())
 }

@@ -2,9 +2,8 @@
 Rust type tutor in cli to help me learn colemak :) 
 ## Feature Roadmap
 - [x] Basic Word reading and print
-- [ ] Make so next words move in case the previous word goes over the limit instead of overlapping
-- [ ] Timer
-- [ ] Option to choose between **timed runs** vs **amount of words** 
+- [x] Timer
+- [x] Option to choose between **timed runs** vs **amount of words** 
 - [ ] Accuracy tracker
 - [ ] Dictionary implementation
 - [ ] Proper cli flags

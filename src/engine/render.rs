@@ -11,9 +11,9 @@ const PROMPT: &str = "Type: ";
 
 pub fn render_line(
     out: &mut Stdout,
-    current: &str,
-    upcoming: &[&str],
+    queue: &Vec<&str>
 ) -> Result<(), std::io::Error> {
+    let current = queue.iter().next().unwrap();
     execute!(
         out,
         terminal::Clear(terminal::ClearType::CurrentLine),
@@ -23,7 +23,7 @@ pub fn render_line(
         Print(current),
     )?;
 
-    for word in upcoming {
+    for word in queue.iter().skip(1) {
         execute!(
             out,
             SetForegroundColor(Color::DarkGrey),
@@ -34,19 +34,4 @@ pub fn render_line(
 
     execute!(out, cursor::MoveToColumn(PROMPT.len() as u16))?;
     out.flush()
-}
-
-pub fn get_upcoming_words<'a>(
-    current_idx: usize,
-    words: &'a [&'a str],
-    num_words_to_show: usize,
-) -> &'a [&'a str] {
-    let next_idx = current_idx + 1;
-
-    if next_idx >= words.len() {
-        return &[];
-    }
-
-    let end_idx = (next_idx + num_words_to_show).min(words.len());
-    &words[next_idx..end_idx]
 }

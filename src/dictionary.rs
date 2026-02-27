@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 pub const WORDS: [&str; 8] = [
     "tent",
     "station",
@@ -8,4 +9,5 @@ pub const WORDS: [&str; 8] = [
     "sat",
     "sitio",
 ];
-pub const NUM_UPCOMING_WORDS_TO_SHOW: usize = 2;
+#[allow(dead_code)]
+pub const QUEUE_SIZE: usize = 2;
