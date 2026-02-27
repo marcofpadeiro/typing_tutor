@@ -74,7 +74,7 @@ impl GameResult {
 
 pub fn run(
     out: &mut Stdout,
-    words: Vec<&'static str>,
+    words: &Vec<String>,
     num_words_to_show: usize,
     game_mode: GameMode,
     _render_mode: RenderMode,
@@ -83,8 +83,14 @@ pub fn run(
 
     let time_took: Duration;
     let mut words_completed: usize = 0;
-    let mut queue: Vec<&str> = vec![];
-    let mut get_word = || words.choose(&mut rng).copied().unwrap_or("error");
+    let mut queue: Vec<String> = vec![];
+    let mut get_word = || {
+        words
+            .choose(&mut rng)
+            .cloned()
+            .unwrap_or(String::from("error"))
+            .to_string()
+    };
     let mut correct_chars = 0;
     let mut incorrect_chars = 0;
 
@@ -136,7 +142,7 @@ pub fn run(
 
 fn run_word_cycle(
     out: &mut Stdout,
-    queue: &mut Vec<&str>,
+    queue: &mut Vec<String>,
     time_limit: Option<Duration>,
     start_time: Instant,
 ) -> Result<Option<WordResult>, Box<dyn std::error::Error>> {

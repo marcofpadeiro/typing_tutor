@@ -11,7 +11,7 @@ const PROMPT: &str = "Type: ";
 
 pub fn render_line(
     out: &mut Stdout,
-    queue: &Vec<&str>
+    queue: &Vec<String>
 ) -> Result<(), std::io::Error> {
     let current = queue.iter().next().unwrap();
     execute!(

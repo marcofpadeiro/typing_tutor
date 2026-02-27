@@ -1,9 +1,9 @@
-use crate::dictionary::QUEUE_SIZE;
-use crate::dictionary::WORDS;
 use std::io::stdout;
 
 use crossterm::terminal;
 use typing_tutor::{GameMode, RenderMode, run};
+
+use crate::dictionary::{QUEUE_SIZE, load_dictionary};
 
 mod dictionary;
 
@@ -13,9 +13,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut out = stdout();
     terminal::enable_raw_mode()?;
 
+    let dictionary = load_dictionary("medium");
+
     let result = run(
         &mut out,
-        WORDS.to_vec(),
+        &dictionary,
         QUEUE_SIZE,
         GameMode::Timer(TIMER),
         RenderMode::Upcoming(QUEUE_SIZE),
