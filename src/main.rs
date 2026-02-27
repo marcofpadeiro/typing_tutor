@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let dictionary = load_dictionary(&args.dictionary, args.filter);
     if dictionary.is_empty() {
         terminal::disable_raw_mode()?;
-        println!("failed loading dictionary...");
+        println!("empty dictionary");
         exit(0);
     }
 
@@ -28,6 +28,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         args.word_preview as usize,
         args.mode,
         args.quantity,
+        args.auto_advance,
         RenderMode::Upcoming(args.word_preview as usize),
     );
 

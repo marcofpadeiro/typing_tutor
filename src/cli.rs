@@ -25,6 +25,10 @@ pub struct Args {
     #[arg(short, long, default_value_t = 2)]
     pub word_preview: u64,
 
+    /// advance to the next word automatically without pressing space
+    #[arg(short, long, default_value_t = false)]
+    pub auto_advance: bool,
+
     /// exclude words shorter than this length
     #[arg(short = 's', long, default_value_t = 2)]
     pub min_word_size: u64,

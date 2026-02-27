@@ -81,6 +81,7 @@ pub fn run(
     word_preview: usize,
     mode: GameMode,
     quantity: u64,
+    auto_advance: bool,
     _render_mode: RenderMode,
 ) -> Result<GameResult, Box<dyn std::error::Error>> {
     let mut rng = thread_rng();
@@ -107,7 +108,7 @@ pub fn run(
         GameMode::Words => {
             let start = Instant::now();
             while words_completed < quantity as usize {
-                let word_cycle_result = run_word_cycle(out, &mut queue, None, start)?;
+                let word_cycle_result = run_word_cycle(out, &mut queue, auto_advance, None, start)?;
                 if let Some(word_result) = word_cycle_result {
                     words_completed += 1;
                     correct_chars += word_result.correct_chars;
@@ -124,7 +125,8 @@ pub fn run(
             let start = Instant::now();
             let limit = Duration::from_secs(quantity);
             while start.elapsed() < limit {
-                let word_cycle_result = run_word_cycle(out, &mut queue, Some(limit), start)?;
+                let word_cycle_result =
+                    run_word_cycle(out, &mut queue, auto_advance, Some(limit), start)?;
                 if let Some(word_result) = word_cycle_result {
                     words_completed += 1;
                     correct_chars += word_result.correct_chars;
@@ -148,6 +150,7 @@ pub fn run(
 fn run_word_cycle(
     out: &mut Stdout,
     queue: &mut Vec<String>,
+    auto_advance: bool,
     time_limit: Option<Duration>,
     start_time: Instant,
 ) -> Result<Option<WordResult>, Box<dyn std::error::Error>> {
@@ -156,6 +159,7 @@ fn run_word_cycle(
     Ok(process_word_input(
         out,
         queue.iter().next().unwrap(),
+        auto_advance,
         time_limit,
         start_time,
     )?)

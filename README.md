@@ -27,6 +27,7 @@ you can customize your session using flags:
 | `--filter` | `-f` | `none` | restrict dictionary to words containing only these characters |
 | `--word-preview` | `-w` | `3` | number of upcoming words to show in the queue |
 | `--min-word-size` | `-s` | `2` | exclude words shorter than this length |
+| `--auto-advance` | `-a` | `false` | advance to the next word automatically without pressing space |
 
 ## examples
 ##### race against time

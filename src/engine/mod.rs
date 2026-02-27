@@ -17,6 +17,7 @@ pub mod render;
 pub fn process_word_input(
     out: &mut Stdout,
     target: &str,
+    auto_advance: bool,
     time_limit: Option<Duration>,
     start_time: Instant,
 ) -> Result<Option<WordResult>, Box<dyn std::error::Error>> {
@@ -25,6 +26,9 @@ pub fn process_word_input(
     let mut incorrect: usize = 0;
 
     loop {
+        if written == target && auto_advance {
+            break;
+        }
         if let Some(limit) = time_limit {
             if start_time.elapsed() >= limit {
                 break;
