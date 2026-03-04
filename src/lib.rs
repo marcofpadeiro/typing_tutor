@@ -2,6 +2,7 @@ use crate::cli::Args;
 use crate::engine::process_word_input;
 use crate::engine::render::render_line;
 use clap::ValueEnum;
+use rand::Rng;
 use rand::prelude::SliceRandom;
 use rand::thread_rng;
 use std::io::Stdout;
@@ -91,11 +92,18 @@ pub fn run(
     let mut words_completed: usize = 0;
     let mut queue: Vec<String> = vec![];
     let mut get_word = || {
-        words
-            .choose(&mut rng)
-            .cloned()
-            .unwrap_or(String::from("error"))
-            .to_string()
+        if let Some(ref custom_keys) = settings.practice {
+            let char_vec: Vec<char> = custom_keys.chars().collect();
+            let len = rng.gen_range(3..=7);
+            (0..len)
+                .map(|_| char_vec[rng.gen_range(0..char_vec.len())])
+                .collect::<String>()
+        } else {
+            words
+                .choose(&mut rng)
+                .cloned()
+                .unwrap_or_else(|| "error".to_string())
+        }
     };
     let mut correct_chars = 0;
     let mut incorrect_chars = 0;

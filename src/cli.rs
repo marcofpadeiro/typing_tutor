@@ -1,5 +1,5 @@
-use clap::Parser;
 use crate::GameMode;
+use clap::Parser;
 
 /// a minimalist terminal typing tutor
 #[derive(Parser, Debug)]
@@ -32,4 +32,8 @@ pub struct Args {
     /// exclude words shorter than this length
     #[arg(short = 's', long, default_value_t = 2)]
     pub min_word_size: u64,
+
+    /// generate random strings using only the characters provided (overrides dictionary parameter)
+    #[arg(short, long)]
+    pub practice: Option<String>,
 }
