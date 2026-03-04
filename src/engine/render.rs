@@ -1,4 +1,4 @@
-use std::io::Write;
+use std::{collections::VecDeque, io::Write};
 
 use crate::Stdout;
 use crossterm::{
@@ -9,7 +9,7 @@ use crossterm::{
 
 const PROMPT: &str = "Type: ";
 
-pub fn render_line(out: &mut Stdout, queue: &Vec<String>) -> Result<(), std::io::Error> {
+pub fn render_line(out: &mut Stdout, queue: &VecDeque<String>) -> Result<(), std::io::Error> {
     let current = queue.iter().next().unwrap();
     execute!(
         out,

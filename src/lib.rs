@@ -1,10 +1,10 @@
 use crate::cli::Args;
+use crate::dictionary::WordProvider;
 use crate::engine::process_word_input;
 use crate::engine::render::render_line;
 use clap::ValueEnum;
-use rand::Rng;
-use rand::prelude::SliceRandom;
 use rand::thread_rng;
+use std::collections::VecDeque;
 use std::io::Stdout;
 use std::time::Duration;
 use std::time::Instant;
@@ -82,95 +82,58 @@ impl GameResult {
 
 pub fn run(
     out: &mut Stdout,
-    words: &[String],
+    provider: &WordProvider,
     settings: &Args,
     _render_mode: RenderMode,
 ) -> Result<GameResult, Box<dyn std::error::Error>> {
     let mut rng = thread_rng();
 
-    let time_took: Duration;
     let mut words_completed: usize = 0;
-    let mut queue: Vec<String> = vec![];
-    let mut get_word = || {
-        if let Some(ref custom_keys) = settings.practice {
-            let char_vec: Vec<char> = custom_keys.chars().collect();
-            let len = rng.gen_range(3..=7);
-            (0..len)
-                .map(|_| char_vec[rng.gen_range(0..char_vec.len())])
-                .collect::<String>()
-        } else {
-            words
-                .choose(&mut rng)
-                .cloned()
-                .unwrap_or_else(|| "error".to_string())
-        }
-    };
     let mut correct_chars = 0;
     let mut incorrect_chars = 0;
 
-    queue.push(get_word());
-    for _ in 0..settings.word_preview {
-        queue.push(get_word());
+    let mut queue: VecDeque<String> = VecDeque::new();
+
+    for _ in 0..=settings.word_preview {
+        queue.push_back(provider.get_word(&mut rng));
     }
 
-    match settings.mode {
-        GameMode::Words => {
-            let start = Instant::now();
-            while words_completed < settings.quantity as usize {
-                let word_cycle_result =
-                    run_word_cycle(out, &mut queue, settings.auto_advance, None, start)?;
-                if let Some(word_result) = word_cycle_result {
-                    words_completed += 1;
-                    correct_chars += word_result.correct_chars;
-                    incorrect_chars += word_result.incorrect_chars;
-                }
-                queue.remove(0);
-                if words_completed < (settings.quantity - settings.word_preview) as usize {
-                    queue.push(get_word());
-                }
+    let start = Instant::now();
+    let time_limit = match settings.mode {
+        GameMode::Timer => Some(Duration::from_secs(settings.quantity)),
+        GameMode::Words => None,
+    };
+
+    while match settings.mode {
+        GameMode::Words => words_completed < settings.quantity as usize,
+        GameMode::Timer => start.elapsed() < time_limit.unwrap_or_default(),
+    } {
+        render_line(out, &queue)?;
+        let word_cycle_result =
+            process_word_input(out, queue.iter().next().unwrap(), settings.auto_advance, time_limit, start)?;
+
+        if let Some(word_result) = word_cycle_result {
+            words_completed += 1;
+            correct_chars += word_result.correct_chars;
+            incorrect_chars += word_result.incorrect_chars;
+
+            queue.pop_front();
+
+            let should_refill = match settings.mode {
+                GameMode::Words => words_completed + queue.len() < settings.quantity as usize,
+                GameMode::Timer => true,
+            };
+
+            if should_refill {
+                queue.push_back(provider.get_word(&mut rng));
             }
-            time_took = start.elapsed();
-        }
-        GameMode::Timer => {
-            let start = Instant::now();
-            let limit = Duration::from_secs(settings.quantity);
-            while start.elapsed() < limit {
-                let word_cycle_result =
-                    run_word_cycle(out, &mut queue, settings.auto_advance, Some(limit), start)?;
-                if let Some(word_result) = word_cycle_result {
-                    words_completed += 1;
-                    correct_chars += word_result.correct_chars;
-                    incorrect_chars += word_result.incorrect_chars;
-                }
-                queue.remove(0);
-                queue.push(get_word());
-            }
-            time_took = start.elapsed();
         }
     }
 
     Ok(GameResult {
-        time_took,
+        time_took: start.elapsed(),
         words_completed,
         correct_chars,
         incorrect_chars,
     })
-}
-
-fn run_word_cycle(
-    out: &mut Stdout,
-    queue: &mut Vec<String>,
-    auto_advance: bool,
-    time_limit: Option<Duration>,
-    start_time: Instant,
-) -> Result<Option<WordResult>, Box<dyn std::error::Error>> {
-    render_line(out, queue)?;
-
-    Ok(process_word_input(
-        out,
-        queue.iter().next().unwrap(),
-        auto_advance,
-        time_limit,
-        start_time,
-    )?)
 }

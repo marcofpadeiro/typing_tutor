@@ -31,7 +31,7 @@ pub struct Args {
 
     /// exclude words shorter than this length
     #[arg(short = 's', long, default_value_t = 2)]
-    pub min_word_size: u64,
+    pub min_word_size: usize,
 
     /// generate random strings using only the characters provided (overrides dictionary parameter)
     #[arg(short, long)]

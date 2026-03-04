@@ -48,7 +48,7 @@ impl DictSource {
 }
 
 impl WordSize {
-    pub fn get_url(self) -> String {
+    pub fn get_url(&self) -> String {
         match self {
             Self::Short => SMALL_URL,
             Self::Medium => MEDIUM_URL,
