@@ -64,7 +64,9 @@ impl GameResult {
             return 0;
         }
 
-        (self.words_completed * 60) / secs
+        let words = self.correct_chars / 5;
+
+        (words * 60) / secs
     }
     pub fn accuracy(self) -> f32 {
         let total_presses = (self.correct_chars + self.incorrect_chars) as f32;
