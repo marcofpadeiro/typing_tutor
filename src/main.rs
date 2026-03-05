@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         &mut out,
         &setup_provider(&args),
         &args,
-        RenderMode::Upcoming(args.word_preview as usize),
+        RenderMode::Upcoming(args.word_preview),
     );
 
     terminal::disable_raw_mode()?;

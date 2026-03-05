@@ -100,17 +100,23 @@ pub fn run(
 
     let start = Instant::now();
     let time_limit = match settings.mode {
-        GameMode::Timer => Some(Duration::from_secs(settings.quantity)),
+        GameMode::Timer => Some(Duration::from_secs(settings.quantity as u64)),
         GameMode::Words => None,
     };
 
     while match settings.mode {
-        GameMode::Words => words_completed < settings.quantity as usize,
+        GameMode::Words => words_completed < settings.quantity,
         GameMode::Timer => start.elapsed() < time_limit.unwrap_or_default(),
     } {
         render_line(out, &queue)?;
-        let word_cycle_result =
-            process_word_input(out, queue.iter().next().unwrap(), settings.auto_advance, time_limit, start)?;
+        let current_word = queue.front().map(|s| s.as_str()).unwrap_or("thisshouldnothappenlmao");
+        let word_cycle_result = process_word_input(
+            out,
+            current_word,
+            settings.auto_advance,
+            time_limit,
+            start,
+        )?;
 
         if let Some(word_result) = word_cycle_result {
             words_completed += 1;
@@ -120,7 +126,7 @@ pub fn run(
             queue.pop_front();
 
             let should_refill = match settings.mode {
-                GameMode::Words => words_completed + queue.len() < settings.quantity as usize,
+                GameMode::Words => words_completed + queue.len() < settings.quantity,
                 GameMode::Timer => true,
             };
 

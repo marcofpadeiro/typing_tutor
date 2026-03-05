@@ -11,7 +11,7 @@ pub struct Args {
 
     /// time limit in seconds or total word count, depending on mode
     #[arg(short, long, default_value_t = 30)]
-    pub quantity: u64,
+    pub quantity: usize,
 
     /// predefined sets (small, medium, long), a local file path, or a url
     #[arg(short, long, default_value = "medium")]
@@ -23,7 +23,7 @@ pub struct Args {
 
     /// number of upcoming words to display in the queue
     #[arg(short, long, default_value_t = 2)]
-    pub word_preview: u64,
+    pub word_preview: usize,
 
     /// advance to the next word automatically without pressing space
     #[arg(short, long, default_value_t = false)]

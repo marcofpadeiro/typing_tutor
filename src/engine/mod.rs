@@ -14,6 +14,7 @@ use crossterm::{
 use crate::WordResult;
 
 pub mod render;
+
 pub fn process_word_input(
     out: &mut Stdout,
     target: &str,
@@ -64,13 +65,12 @@ pub fn process_word_input(
                     KeyCode::Backspace => {
                         if let Some(_last_char) = written.pop() {
                             let index = written.len();
-                            let restore_char = target_chars.get(index).cloned().unwrap_or(' ');
 
                             execute!(
                                 out,
                                 cursor::MoveLeft(1),
                                 SetForegroundColor(Color::White),
-                                Print(restore_char),
+                                Print(target_chars.get(index).unwrap_or(&' ')),
                                 cursor::MoveLeft(1)
                             )?;
                         }

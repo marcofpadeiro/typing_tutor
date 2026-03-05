@@ -10,7 +10,10 @@ use crossterm::{
 const PROMPT: &str = "Type: ";
 
 pub fn render_line(out: &mut Stdout, queue: &VecDeque<String>) -> Result<(), std::io::Error> {
-    let current = queue.iter().next().unwrap();
+    let current = queue
+        .front()
+        .map(|s| s.as_str())
+        .unwrap_or("thisshouldnothappelmao");
     execute!(
         out,
         terminal::Clear(terminal::ClearType::CurrentLine),
